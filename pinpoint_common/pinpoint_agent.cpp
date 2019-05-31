@@ -264,17 +264,37 @@ namespace Pinpoint
 
             try
             {
-                statUdpSender.reset(new UdpDataSender("collectorStatSender",
-                                                      args->collectorStatIp,
-                                                      args->collectorStatPort));
-
-                spanUdpSender.reset(new UdpDataSender("collectorSpanSender",
-                                                      args->collectorSpanIp,
-                                                      args->collectorSpanPort));
 
                 /* init scheduledExecutor */
                 scheduledExecutor.reset(new ScheduledExecutor("scheduledExecutor"));
+		if(args->collectorStatTcp){
+                    boost::shared_ptr<DataSender> statTcpDataSender =
+                    boost::dynamic_pointer_cast<DataSender>(new PinpointClient("statDataSender-client",
+                                                                               args->collectorStatIp,
+                                                                               args->collectorStatPort,
+                                                                               scheduledExecutor,
+                                                                               args->reconInterval));
+                    statSender.reset(statTcpDataSender);
+                    
+                }else{
+                    statSender.reset(new UdpDataSender("collectorStatSender",
+                                                          args->collectorStatIp,
+                                                          args->collectorStatPort));
+                }
 
+                if(args->collectorSpanTcp){
+                    boost::shared_ptr<DataSender> spanTcpDataSender =
+                    boost::dynamic_pointer_cast<DataSender>(new PinpointClient("spanDataSender-client",
+                                                                               args->collectorSpanIp,
+                                                                               args->collectorSpanPort,
+                                                                               scheduledExecutor,
+                                                                               args->reconInterval));
+                    spanSender.reset(spanTcpDataSender);
+                }else{
+                    spanSender.reset(new UdpDataSender("collectorSpanSender",
+                                                          args->collectorSpanIp,
+                                                          args->collectorSpanPort));
+                }	
                 pinpointClientPtr.reset(new PinpointClient("pinpoint-client",
                                                            args->collectorTcpIp,
                                                            args->collectorTcpPort,
@@ -294,11 +314,11 @@ namespace Pinpoint
                 agentDataSender.reset(new AgentDataSender(scheduledExecutor, tcpDataSender));
 
                 /* agentStatSender */
-                agentMonitorSender.reset(new AgentMonitorSender(scheduledExecutor, statUdpSender));
+                agentMonitorSender.reset(new AgentMonitorSender(scheduledExecutor, statSender));
 
 
                 /* traceDataSender */
-                traceDataSender.reset(new TraceDataSender(spanUdpSender));
+                traceDataSender.reset(new TraceDataSender(spanSender));
 
                 /* sampling */
                 samplingPtr.reset(new DefaultSampling(args->traceLimit, args->skipTraceTime));
@@ -382,8 +402,8 @@ namespace Pinpoint
                 stringDataSender->start();
 
                 boost::dynamic_pointer_cast<Executor>(pinpointClientPtr)->start();
-                boost::dynamic_pointer_cast<Executor>(statUdpSender)->start();
-                boost::dynamic_pointer_cast<Executor>(spanUdpSender)->start();
+                boost::dynamic_pointer_cast<Executor>(statSender)->start();
+                boost::dynamic_pointer_cast<Executor>(spanSender)->start();
                 scheduledExecutor->start();
 
                 this->status = (volatile AgentStatus)AGENT_STARTED;
@@ -410,8 +430,8 @@ namespace Pinpoint
             int32_t err = SUCCESS;
 
             boost::dynamic_pointer_cast<Executor>(pinpointClientPtr)->stop();
-            boost::dynamic_pointer_cast<Executor>(statUdpSender)->stop();
-            boost::dynamic_pointer_cast<Executor>(spanUdpSender)->stop();
+            boost::dynamic_pointer_cast<Executor>(statSender)->stop();
+            boost::dynamic_pointer_cast<Executor>(spanSender)->stop();
             scheduledExecutor->stop();
 
             status = (volatile AgentStatus)AGENT_STOPPED;

@@ -91,8 +91,8 @@ namespace Pinpoint
             static int32_t addPredefinedType();
             AgentFunction agentFunction;
             boost::shared_ptr<ScheduledExecutor> scheduledExecutor;
-            boost::shared_ptr<DataSender> statUdpSender;
-            boost::shared_ptr<DataSender> spanUdpSender;
+            boost::shared_ptr<DataSender> statSender;
+            boost::shared_ptr<DataSender> spanSender;
 
             PinpointClientPtr pinpointClientPtr;
             boost::shared_ptr<AgentDataSender> agentDataSender;

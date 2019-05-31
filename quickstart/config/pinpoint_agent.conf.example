@@ -3,8 +3,10 @@ AgentID=php_pinpoint
 ApplicationName=PHPApplication
 
 ## collector ip address
+CollectorSpanTcp=true
 CollectorSpanIp=x.x.x.x
 CollectorSpanPort=xx
+CollectorStatTcp=true
 CollectorStatIp=x.x.x.x
 CollectorStatPort=xx
 CollectorTcpIp=x.x.x.x

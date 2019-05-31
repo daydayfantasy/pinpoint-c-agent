@@ -36,6 +36,8 @@ namespace Pinpoint
         {
             std::string agentId;
             std::string applicationName;
+	    bool collectorSpanTcp;
+	    bool collectorStatTcp;
             std::string collectorSpanIp;
             uint32_t collectorSpanPort;
             std::string collectorStatIp;

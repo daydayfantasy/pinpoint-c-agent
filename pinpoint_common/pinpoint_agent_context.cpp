@@ -68,7 +68,9 @@ namespace Pinpoint
         bool AgentConfigArgs::assignArgs(Configuration::Config* config)
         {
             const static std::string notSet = "NULL";
-
+	    const static std::string trueStr = "true";
+	    collectorSpanTcp = config->readString("common.CollectorSpanTcp", trueStr) == trueStr;
+	    collectorStatTcp = config->readString("common.CollectorStatTcp", trueStr) == trueStr;
             agentId = config->readString("common.AgentID", defaultConfigArgs.agentId);
             applicationName = config->readString("common.ApplicationName",
                     defaultConfigArgs.applicationName);
