@@ -361,7 +361,7 @@ namespace Pinpoint
 
             void responseHandler();
             int32_t requestResponseHandler();
-
+	    void sendHeadLessPacket(PacketPtr &packetPtr, int32_t timeout);
             void doRequest(PacketPtr& packetPtr);
 
             typedef enum {E_CLOSE,E_CONNECTING,E_CONNECTED,E_WRITTING,E_READING} E_NState;

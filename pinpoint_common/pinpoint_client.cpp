@@ -288,6 +288,9 @@ namespace Pinpoint
                     case PacketType::APPLICATION_REQUEST:
                         doRequest(packetPtr);
                         break;
+		    case PacketType::HEADLESS:
+                        sendHeadLessPacket(packetPtr, timeout);
+                        break;
                     case PacketType::CONTROL_HANDSHAKE:
                     case PacketType::CONTROL_PING:
                     case PacketType::CONTROL_PONG:
@@ -315,6 +318,35 @@ namespace Pinpoint
             }
 
             return SUCCESS;
+        }
+
+        void PinpointClient::sendHeadLessPacket(PacketPtr &packetPtr, int32_t timeout)
+        {
+            assert (timeout > 0 || (timeout < 0 && timeout == -1));
+            
+            int32_t err;
+            
+            assert(packetPtr != NULL && (packetPtr->getType() == PacketType::HEADLESS));
+            
+            try
+            {
+                std::string codedData = boost::get<std::string>(packetPtr->getPacketData());
+                packetPtr->setCodedData(codedData);
+            }
+            catch (std::exception& exception)
+            {
+                LOGE("tcp send packet exception: ex=%s", exception.what());
+                assert (false);
+                return ;
+            }
+       
+            err = sendQueue.push_back(packetPtr);
+           
+            if (err != SUCCESS)
+            {
+                LOGW("sendQueue.push_back failed! err=%d", err);
+                return;
+            }
         }
 
         void PinpointClient::doRequest(PacketPtr &packetPtr)
