@@ -268,14 +268,11 @@ namespace Pinpoint
                 /* init scheduledExecutor */
                 scheduledExecutor.reset(new ScheduledExecutor("scheduledExecutor"));
 		if(args->collectorStatTcp){
-                    boost::shared_ptr<DataSender> statTcpDataSender =
-                    boost::dynamic_pointer_cast<DataSender>(new PinpointClient("statDataSender-client",
-                                                                               args->collectorStatIp,
-                                                                               args->collectorStatPort,
-                                                                               scheduledExecutor,
-                                                                               args->reconInterval));
-                    statSender.reset(statTcpDataSender);
-                    
+                    statSender.reset(new PinpointClient("statDataSender-client",
+                                                        args->collectorStatIp,
+                                                        args->collectorStatPort,
+                                                        scheduledExecutor,
+                                                        args->reconInterval));
                 }else{
                     statSender.reset(new UdpDataSender("collectorStatSender",
                                                           args->collectorStatIp,
@@ -283,13 +280,11 @@ namespace Pinpoint
                 }
 
                 if(args->collectorSpanTcp){
-                    boost::shared_ptr<DataSender> spanTcpDataSender =
-                    boost::dynamic_pointer_cast<DataSender>(new PinpointClient("spanDataSender-client",
-                                                                               args->collectorSpanIp,
-                                                                               args->collectorSpanPort,
-                                                                               scheduledExecutor,
-                                                                               args->reconInterval));
-                    spanSender.reset(spanTcpDataSender);
+		    spanSender.reset(new PinpointClient("spanDataSender-client",
+                                                        args->collectorSpanIp,
+                                                        args->collectorSpanPort,
+                                                        scheduledExecutor,
+                                                        args->reconInterval));
                 }else{
                     spanSender.reset(new UdpDataSender("collectorSpanSender",
                                                           args->collectorSpanIp,
