@@ -24,6 +24,8 @@ namespace Pinpoint
         const static AgentConfigArgs defaultConfigArgs = {
                 "uninitiated agentid",
                 "uninitiated applicationName",
+		true,
+		true,
                 "127.0.0.1",
                 8000,
                 "127.0.0.1",
