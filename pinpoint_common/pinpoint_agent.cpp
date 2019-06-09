@@ -267,6 +267,8 @@ namespace Pinpoint
 
                 /* init scheduledExecutor */
                 scheduledExecutor.reset(new ScheduledExecutor("scheduledExecutor"));
+		int32_t packetTypeStat = PacketType::APPLICATION_SEND;
+                int32_t packetTypeSpan = PacketType::APPLICATION_SEND;
 		if(args->collectorStatTcp){
                     statSender.reset(new PinpointClient("statDataSender-client",
                                                         args->collectorStatIp,
@@ -277,6 +279,7 @@ namespace Pinpoint
                     statSender.reset(new UdpDataSender("collectorStatSender",
                                                           args->collectorStatIp,
                                                           args->collectorStatPort));
+		    packetTypeStat =PacketType::HEADLESS;
                 }
 
                 if(args->collectorSpanTcp){
@@ -289,6 +292,7 @@ namespace Pinpoint
                     spanSender.reset(new UdpDataSender("collectorSpanSender",
                                                           args->collectorSpanIp,
                                                           args->collectorSpanPort));
+		    packetTypeSpan =PacketType::HEADLESS;
                 }	
                 pinpointClientPtr.reset(new PinpointClient("pinpoint-client",
                                                            args->collectorTcpIp,
@@ -309,11 +313,11 @@ namespace Pinpoint
                 agentDataSender.reset(new AgentDataSender(scheduledExecutor, tcpDataSender));
 
                 /* agentStatSender */
-                agentMonitorSender.reset(new AgentMonitorSender(scheduledExecutor, statSender));
+                agentMonitorSender.reset(new AgentMonitorSender(scheduledExecutor, statSender, packetTypeStat));
 
 
                 /* traceDataSender */
-                traceDataSender.reset(new TraceDataSender(spanSender));
+                traceDataSender.reset(new TraceDataSender(spanSender, packetTypeSpan));
 
                 /* sampling */
                 samplingPtr.reset(new DefaultSampling(args->traceLimit, args->skipTraceTime));

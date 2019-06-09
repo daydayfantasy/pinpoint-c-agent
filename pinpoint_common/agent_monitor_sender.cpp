@@ -55,10 +55,9 @@ namespace Pinpoint
             return err;
         }
 
-
-        AgentMonitorSender::AgentMonitorSender(boost::shared_ptr<ScheduledExecutor> &scheduledExecutor,
-                                               boost::shared_ptr<DataSender> &dataSender)
-                : scheduledExecutor(scheduledExecutor), dataSender(dataSender)
+	AgentMonitorSender::AgentMonitorSender(boost::shared_ptr<ScheduledExecutor> &scheduledExecutor,
+                                               boost::shared_ptr<DataSender> &dataSender, int32_t packetType)
+                : scheduledExecutor(scheduledExecutor), dataSender(dataSender), packetType(packetType)
         {
 
         }
@@ -136,7 +135,7 @@ namespace Pinpoint
                     return FAILED;
                 }
 
-                PacketPtr packetPtr(new Packet(PacketType::HEADLESS, 1));
+                PacketPtr packetPtr(new Packet(packetType, 1));
                 PacketData &packetData = packetPtr->getPacketData();
                 packetData = data;
 

@@ -89,6 +89,7 @@ namespace Pinpoint
 
             try
             {
+		LOGT("packet type:%d", packetPtr->getType());
                 std::string codedData = boost::get<std::string>(packetPtr->getPacketData());
                 packetPtr->setCodedData(codedData);
             }

@@ -31,7 +31,7 @@ namespace Pinpoint
         class TraceDataSender : public boost::enable_shared_from_this<TraceDataSender>
         {
         public:
-            explicit TraceDataSender(const boost::shared_ptr<DataSender> &dataSender);
+            explicit TraceDataSender(const boost::shared_ptr<DataSender> &dataSender, int32_t packetType);
 
             ~TraceDataSender();
 
@@ -46,6 +46,7 @@ namespace Pinpoint
             boost::shared_ptr<TMemoryBuffer> transportOut;
             boost::shared_ptr<TCompactProtocol> protocolOut;
             HeaderTBaseSerializer serializer;
+	    int32_t packetType;
         };
 
         typedef boost::shared_ptr<TraceDataSender> TraceDataSenderPtr;

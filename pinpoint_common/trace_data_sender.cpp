@@ -26,8 +26,8 @@ namespace Pinpoint
     namespace Agent
     {
 
-        TraceDataSender::TraceDataSender(const boost::shared_ptr<DataSender> &dataSender)
-                : dataSender(dataSender)
+        TraceDataSender::TraceDataSender(const boost::shared_ptr<DataSender> &dataSender, int32_t packetType)
+                : dataSender(dataSender),packetType(packetType)
         {
 
         }
@@ -70,6 +70,7 @@ namespace Pinpoint
         {
             if (protocolOut == NULL || transportOut == NULL)
             {
+		LOGE("TraceDataSender.send fail.");
                 return FAILED;
             }
 
@@ -94,7 +95,7 @@ namespace Pinpoint
                     return err;
                 }
 
-                PacketPtr packetPtr(new Packet(PacketType::HEADLESS, 1));
+                PacketPtr packetPtr(new Packet(packetType, 1));
                 PacketData& packetData = packetPtr->getPacketData();
                 packetData = data;
 

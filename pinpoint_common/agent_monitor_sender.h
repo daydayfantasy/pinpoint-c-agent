@@ -54,7 +54,7 @@ namespace Pinpoint
             friend class AgentMonitorBatchTask;
 
             AgentMonitorSender(boost::shared_ptr<ScheduledExecutor> &scheduledExecutor,
-                               boost::shared_ptr<DataSender> &dataSender);
+                               boost::shared_ptr<DataSender> &dataSender, int32_t packetType);
 
             ~AgentMonitorSender();
 
@@ -71,6 +71,7 @@ namespace Pinpoint
             TAgentStat collectAgentStat();
 
             int32_t send(const std::vector<TAgentStat> &stats);
+	    int32_t packetType;
         };
 
     }

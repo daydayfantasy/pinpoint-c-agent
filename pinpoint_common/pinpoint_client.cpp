@@ -288,7 +288,7 @@ namespace Pinpoint
                     case PacketType::APPLICATION_REQUEST:
                         doRequest(packetPtr);
                         break;
-		    case PacketType::HEADLESS:
+		    case PacketType::APPLICATION_SEND:
                         sendHeadLessPacket(packetPtr, timeout);
                         break;
                     case PacketType::CONTROL_HANDSHAKE:
@@ -326,12 +326,17 @@ namespace Pinpoint
             
             int32_t err;
             
-            assert(packetPtr != NULL && (packetPtr->getType() == PacketType::HEADLESS));
+            assert(packetPtr != NULL && (packetPtr->getType() == PacketType::APPLICATION_SEND));
             
             try
             {
-                std::string codedData = boost::get<std::string>(packetPtr->getPacketData());
-                packetPtr->setCodedData(codedData);
+                std::string data = boost::get<std::string>(packetPtr->getPacketData());
+		ChannelBufferV2 buffer;
+                buffer.writeShort(PacketType::APPLICATION_SEND);
+                buffer.appendPayload(data);
+                
+                packetPtr->setCodedData(buffer.getBuffer());
+		LOGT("sendHeadLessPacket: codeData=[%s]",data.c_str());
             }
             catch (std::exception& exception)
             {
